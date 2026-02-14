@@ -67,13 +67,7 @@ const TECH_ICON_MAP: Record<string, string> = {
 };
 
 const normalizeTechName = (name: string) =>
-  name
-    .trim()
-    .toLowerCase()
-    .replace(/\.js/g, "js")
-    .replace(/[()]/g, " ")
-    .replace(/\s+/g, " ")
-    .replace(/\s/g, "-");
+  name.trim().toLowerCase().replace(/\.js/g, "js").replace(/[()]/g, " ").replace(/\s+/g, " ").replace(/\s/g, "-");
 
 export const getDeviconClass = (name: string) => {
   if (!name?.trim()) return DEVICON_FALLBACK_CLASS;
