@@ -67,13 +67,7 @@ const TECH_ICON_MAP: Record<string, string> = {
 };
 
 const normalizeTechName = (name: string) =>
-  name
-    .trim()
-    .toLowerCase()
-    .replace(/\.js/g, "js")
-    .replace(/[()]/g, " ")
-    .replace(/\s+/g, " ")
-    .replace(/\s/g, "-");
+  name.trim().toLowerCase().replace(/\.js/g, "js").replace(/[()]/g, " ").replace(/\s+/g, " ").replace(/\s/g, "-");
 
 export const getDeviconClass = (name: string) => {
   if (!name?.trim()) return DEVICON_FALLBACK_CLASS;
@@ -82,4 +76,18 @@ export const getDeviconClass = (name: string) => {
   const iconClass = TECH_ICON_MAP[normalized];
 
   return iconClass ? `${iconClass} colored` : DEVICON_FALLBACK_CLASS;
+};
+
+export const getTimeStamp = (date: Date | string) => {
+  const now = new Date();
+  const past = new Date(date);
+  const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);
+
+  if (diffInSeconds < 60) return `${diffInSeconds} seconds ago`;
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+  if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} days ago`;
+  if (diffInSeconds < 31104000) return `${Math.floor(diffInSeconds / 2592000)} months ago`;
+
+  return `${Math.floor(diffInSeconds / 31104000)} years ago`;
 };
