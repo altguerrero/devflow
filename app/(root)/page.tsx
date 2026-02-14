@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
 import Link from "next/link";
 import LocalSearch from "@/components/search/LocalSearch";
+import HomeFilter from "@/components/filters/HomeFilter";
 
 const HomePage = () => {
   return (
@@ -22,7 +23,7 @@ const HomePage = () => {
           iconPosition={"left"}
         />
       </section>
-      HomeFilter
+      <HomeFilter />
       <div className="mt-10 flex w-full flex-col gap-6">
         <p>Question Card 1</p>
         <p>Question Card 2</p>
