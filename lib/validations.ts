@@ -6,12 +6,16 @@ const USERNAME_MIN_LENGTH = 3;
 const USERNAME_MAX_LENGTH = 20;
 const NAME_MIN_LENGTH = 2;
 const NAME_MAX_LENGTH = 50;
+const QUESTION_TITLE_MIN_LENGTH = 10;
+const QUESTION_TITLE_MAX_LENGTH = 120;
+const QUESTION_BODY_MIN_LENGTH = 20;
+const QUESTION_BODY_MAX_LENGTH = 5000;
+const QUESTION_TAG_MIN_LENGTH = 1;
+const QUESTION_TAG_MAX_LENGTH = 20;
+const QUESTION_TAG_MIN_COUNT = 1;
+const QUESTION_TAG_MAX_COUNT = 5;
 
-const emailField = z
-  .string()
-  .trim()
-  .toLowerCase()
-  .pipe(z.email("Please enter a valid email address"));
+const emailField = z.string().trim().toLowerCase().pipe(z.email("Please enter a valid email address"));
 
 const passwordField = z
   .string()
@@ -54,3 +58,33 @@ export const SignUpSchema = z
 
 export type SignInInput = z.infer<typeof SignInSchema>;
 export type SignUpInput = z.infer<typeof SignUpSchema>;
+
+export const AskQuestionSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(QUESTION_TITLE_MIN_LENGTH, `Title must be at least ${QUESTION_TITLE_MIN_LENGTH} characters`)
+    .max(QUESTION_TITLE_MAX_LENGTH, `Title must be at most ${QUESTION_TITLE_MAX_LENGTH} characters`)
+    .refine((value) => /[a-zA-Z0-9]/.test(value), "Title must include letters or numbers"),
+  body: z
+    .string()
+    .trim()
+    .min(QUESTION_BODY_MIN_LENGTH, `Body must be at least ${QUESTION_BODY_MIN_LENGTH} characters`)
+    .max(QUESTION_BODY_MAX_LENGTH, `Body must be at most ${QUESTION_BODY_MAX_LENGTH} characters`)
+    .refine((value) => value.split(/\s+/).length >= 5, "Body must include enough detail (at least 5 words)"),
+  tags: z
+    .array(
+      z
+        .string()
+        .trim()
+        .toLowerCase()
+        .min(QUESTION_TAG_MIN_LENGTH, "Tag cannot be empty")
+        .max(QUESTION_TAG_MAX_LENGTH, `Each tag must be at most ${QUESTION_TAG_MAX_LENGTH} characters`)
+        .regex(/^[a-z0-9-]+$/, "Tags can only contain lowercase letters, numbers, and hyphens")
+    )
+    .min(QUESTION_TAG_MIN_COUNT, `Please add at least ${QUESTION_TAG_MIN_COUNT} tag`)
+    .max(QUESTION_TAG_MAX_COUNT, `Please add at most ${QUESTION_TAG_MAX_COUNT} tags`)
+    .refine((tags) => new Set(tags).size === tags.length, "Tags must be unique"),
+});
+
+export type AskQuestionInput = z.infer<typeof AskQuestionSchema>;
