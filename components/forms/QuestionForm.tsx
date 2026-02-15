@@ -9,6 +9,7 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "../
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
+import TagCard from "../cards/TagCard";
 
 const MdxEditor = dynamic(() => import("@/components/editor/MdxEditor"), {
   ssr: false,
@@ -136,19 +137,7 @@ const QuestionForm = () => {
               <FieldLabel className="paragraph-semibold text-dark400_light800" htmlFor="question-tags">
                 Tags <span className="text-primary-500">*</span>
               </FieldLabel>
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => removeTag(tag)}
-                    className="background-light800_dark300 body-medium text-dark300_light700 hover:border-primary-500 rounded-full border border-transparent px-3 py-1 transition"
-                    aria-label={`Remove tag ${tag}`}
-                  >
-                    #{tag} ×
-                  </button>
-                ))}
-              </div>
+
               <Input
                 id="question-tags"
                 value={tagInput}
@@ -163,7 +152,12 @@ const QuestionForm = () => {
                 placeholder="Add tags (press Enter or comma)"
                 className="paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 placeholder no-focus min-h-12 border"
               />
-              <FieldDescription className="body-regular text-light-500 mt-2.5">
+              <div className="flex-start mt-2.5 flex flex-wrap gap-2.5">
+                {tags.map((tag) => (
+                  <TagCard key={tag} _id={tag} name={tag} compact remove isButton handleRemove={() => removeTag(tag)} />
+                ))}
+              </div>
+              <FieldDescription className="body-regular text-light-500">
                 Add between 1 and 5 tags (lowercase, numbers, hyphens). Example: react-hooks
               </FieldDescription>
               {fieldState.error && <FieldError errors={[fieldState.error]} />}
