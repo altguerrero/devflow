@@ -152,7 +152,7 @@ const QuestionForm = () => {
                 placeholder="Add tags (press Enter or comma)"
                 className="paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 placeholder no-focus min-h-12 border"
               />
-              <div className="flex-start mt-2.5 flex flex-wrap gap-2.5">
+              <div className="flex-start flex flex-wrap gap-2.5">
                 {tags.map((tag) => (
                   <TagCard key={tag} _id={tag} name={tag} compact remove isButton handleRemove={() => removeTag(tag)} />
                 ))}
