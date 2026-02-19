@@ -10,9 +10,15 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   lint-and-build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
 
     steps:
       - name: Checkout
@@ -24,11 +30,25 @@ jobs:
           node-version: 20
           cache: npm
 
+      - name: Cache Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-next-${{ hashFiles('package-lock.json') }}-${{ hashFiles('**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx', 'next.config.ts') }}
+          restore-keys: |
+            ${{ runner.os }}-next-${{ hashFiles('package-lock.json') }}-
+
       - name: Install dependencies
         run: npm ci
 
       - name: Lint
         run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test --if-present
 
       - name: Build
         env:
