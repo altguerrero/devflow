@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { ZodError, flattenError } from "zod";
 
 import { toErrorResponse, validationError } from "@/lib/http-errors";
+import logger from "@/lib/logger";
 
 export type ErrorResponseBody = {
   success: false;
@@ -43,6 +44,19 @@ export const handleError = (
   fallbackMessage = "Internal Server Error"
 ): NextResponse<ErrorResponseBody> | ({ status: number } & ErrorResponseBody) => {
   const { status, body } = normalizeError(error, fallbackMessage);
+  const logContext = {
+    status,
+    responseType,
+    message: body.error.message,
+    details: body.error.details,
+    err: error instanceof Error ? error : undefined,
+  };
+
+  if (status >= 500) {
+    logger.error(logContext, "Unhandled server error");
+  } else {
+    logger.warn(logContext, "Handled request error");
+  }
 
   if (responseType === "api") {
     return NextResponse.json(body, { status });

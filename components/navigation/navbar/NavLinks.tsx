@@ -16,11 +16,12 @@ interface NavLinksProps {
 
 const NavLinks = ({ isMobileNav = false, userId = "1" }: NavLinksProps) => {
   const pathName = usePathname();
+  const profilePath = ROUTES.PROFILE_BASE;
 
   const getHref = (href: string) => {
-    if (href !== ROUTES.PROFILE) return href;
+    if (href !== profilePath) return href;
     if (!userId) return null;
-    return `${ROUTES.PROFILE}/${userId}`;
+    return ROUTES.PROFILE(userId);
   };
 
   return (
