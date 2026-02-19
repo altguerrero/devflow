@@ -26,6 +26,6 @@ export const sidebarLinks = [
     href: ROUTES.TAGS,
     imgURL: "/icons/tag.svg",
   },
-  { name: "Profile", href: ROUTES.PROFILE, imgURL: "/icons/user.svg" },
+  { name: "Profile", href: ROUTES.PROFILE_BASE, imgURL: "/icons/user.svg" },
   { name: "Ask a Question", href: ROUTES.ASK_QUESTION, imgURL: "/icons/question.svg" },
 ];
