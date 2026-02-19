@@ -10,10 +10,12 @@ import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import ROUTES from "@/constants/routes";
 import Link from "next/link";
 
+import type { ActionResponse } from "@/types/global";
+
 interface AuthFormProps<T extends FieldValues> {
   schema: z.ZodType<T>;
   defaultValues: T;
-  onSubmit: (data: T) => Promise<{ success: boolean }>;
+  onSubmit: (data: T) => Promise<ActionResponse>;
   formType: "SIGN_IN" | "SIGN_UP";
 }
 
@@ -28,7 +30,7 @@ const AuthForm = <T extends FieldValues>({ schema, defaultValues, onSubmit, form
 
     if (!result.success) {
       toast.error("Authentication failed", {
-        description: "Please check your credentials and try again.",
+        description: result.error.message,
       });
       return;
     }

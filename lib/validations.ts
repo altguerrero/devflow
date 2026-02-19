@@ -33,24 +33,26 @@ export const SignInSchema = z.object({
   password: signInPasswordField,
 });
 
-export const SignUpSchema = z
-  .object({
-    name: z
-      .string()
-      .trim()
-      .min(NAME_MIN_LENGTH, `Name must be at least ${NAME_MIN_LENGTH} characters`)
-      .max(NAME_MAX_LENGTH, `Name must be at most ${NAME_MAX_LENGTH} characters`),
-    username: z
-      .string()
-      .trim()
-      .toLowerCase()
-      .min(USERNAME_MIN_LENGTH, `Username must be at least ${USERNAME_MIN_LENGTH} characters`)
-      .max(USERNAME_MAX_LENGTH, `Username must be at most ${USERNAME_MAX_LENGTH} characters`)
-      .regex(/^[a-z0-9_]+$/, "Username can only contain lowercase letters, numbers, and underscores"),
-    email: emailField,
-    password: passwordField,
-    confirmPassword: z.string().trim().min(1, "Please confirm your password"),
-  })
+export const UserSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(NAME_MIN_LENGTH, `Name must be at least ${NAME_MIN_LENGTH} characters`)
+    .max(NAME_MAX_LENGTH, `Name must be at most ${NAME_MAX_LENGTH} characters`),
+  username: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .min(USERNAME_MIN_LENGTH, `Username must be at least ${USERNAME_MIN_LENGTH} characters`)
+    .max(USERNAME_MAX_LENGTH, `Username must be at most ${USERNAME_MAX_LENGTH} characters`)
+    .regex(/^[a-z0-9_]+$/, "Username can only contain lowercase letters, numbers, and underscores"),
+  email: emailField,
+  password: passwordField,
+});
+
+export const SignUpSchema = UserSchema.extend({
+  confirmPassword: z.string().trim().min(1, "Please confirm your password"),
+})
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
@@ -58,6 +60,7 @@ export const SignUpSchema = z
 
 export type SignInInput = z.infer<typeof SignInSchema>;
 export type SignUpInput = z.infer<typeof SignUpSchema>;
+export type UserInput = z.infer<typeof UserSchema>;
 
 export const AskQuestionSchema = z.object({
   title: z
