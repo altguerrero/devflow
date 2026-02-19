@@ -6,17 +6,11 @@ import User from "@/database/user.model";
 import handleError from "@/lib/handlers/error";
 import { conflict, ValidationError } from "@/lib/http-errors";
 import dbConnect from "@/lib/mongoose";
+import { sanitizeUser } from "@/lib/sanitizers/user";
 import { UserSchema } from "@/lib/validations";
 import type { APIErrorResponse } from "@/types/global";
 
 const PASSWORD_SALT_ROUNDS = 12;
-
-const sanitizeUser = <T extends { password?: string; __v?: number }>(user: T) => {
-  const { password, __v, ...safeUser } = user;
-  void password;
-  void __v;
-  return safeUser;
-};
 
 export async function GET() {
   try {
