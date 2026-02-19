@@ -16,7 +16,7 @@ const SignUp = () => {
       }}
       onSubmit={async (data) => {
         void data;
-        return { success: false };
+        return { success: false, error: { message: "Authentication failed" } };
       }}
       formType={"SIGN_UP"}
     />
