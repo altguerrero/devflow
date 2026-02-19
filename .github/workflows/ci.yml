@@ -31,4 +31,7 @@ jobs:
         run: npm run lint
 
       - name: Build
+        env:
+          MONGODB_URI: mongodb://localhost:27017/devflow_ci
+          MONGODB_DB_NAME: devflow_ci
         run: npm run build
