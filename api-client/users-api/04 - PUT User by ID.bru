@@ -1,0 +1,19 @@
+meta {
+  name: PUT User by ID
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/users/{{userId}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Jane Updated",
+    "username": "jane_doe",
+    "email": "jane.updated@example.com"
+  }
+}

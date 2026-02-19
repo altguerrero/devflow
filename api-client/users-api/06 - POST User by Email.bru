@@ -1,0 +1,17 @@
+meta {
+  name: POST User by Email
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/users/email
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "jane@example.com"
+  }
+}
