@@ -1,4 +1,4 @@
-import { Model, Schema, Types, model, models } from "mongoose";
+import { type Model, Schema, type Types, model, models } from "mongoose";
 
 export type VoteTargetType = "Question" | "Answer";
 export type VoteValue = 1 | -1;

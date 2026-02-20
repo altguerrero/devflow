@@ -1,14 +1,21 @@
 "use client";
 
-import { Controller, DefaultValues, FieldValues, Path, SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import * as z from "zod";
-import { FieldGroup, Field, FieldLabel, FieldError } from "../ui/field";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import ROUTES from "@/constants/routes";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import Link from "next/link";
+import {
+  Controller,
+  type DefaultValues,
+  type FieldValues,
+  type Path,
+  type SubmitHandler,
+  useForm,
+} from "react-hook-form";
+import { toast } from "sonner";
+import type * as z from "zod";
+import { Button } from "../ui/button";
+import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
+import { Input } from "../ui/input";
 
 import type { ActionResponse } from "@/types/global";
 
@@ -19,7 +26,12 @@ interface AuthFormProps<T extends FieldValues> {
   formType: "SIGN_IN" | "SIGN_UP";
 }
 
-const AuthForm = <T extends FieldValues>({ schema, defaultValues, onSubmit, formType }: AuthFormProps<T>) => {
+const AuthForm = <T extends FieldValues>({
+  schema,
+  defaultValues,
+  onSubmit,
+  formType,
+}: AuthFormProps<T>) => {
   const form = useForm<T>({
     resolver: standardSchemaResolver(schema),
     defaultValues: defaultValues as DefaultValues<T>,
@@ -35,7 +47,9 @@ const AuthForm = <T extends FieldValues>({ schema, defaultValues, onSubmit, form
       return;
     }
 
-    toast.success(formType === "SIGN_IN" ? "Signed in successfully" : "Account created successfully");
+    toast.success(
+      formType === "SIGN_IN" ? "Signed in successfully" : "Account created successfully"
+    );
   };
 
   const buttonText = formType === "SIGN_IN" ? "Sign In" : "Sign Up";
@@ -51,7 +65,9 @@ const AuthForm = <T extends FieldValues>({ schema, defaultValues, onSubmit, form
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel className="paragraph-medium text-dark400_light700" htmlFor={fieldName}>
-                  {fieldName === "email" ? "Email Address" : fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}
+                  {fieldName === "email"
+                    ? "Email Address"
+                    : fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}
                 </FieldLabel>
                 <Input
                   {...field}
@@ -73,7 +89,11 @@ const AuthForm = <T extends FieldValues>({ schema, defaultValues, onSubmit, form
         disabled={form.formState.isSubmitting}
         className="primary-gradient paragraph-medium rounded-2 font-inter text-light-900! min-h-12 w-full px-4 py-3"
       >
-        {form.formState.isSubmitting ? (buttonText === "Sign In" ? "Signing In..." : "Signing Up...") : buttonText}
+        {form.formState.isSubmitting
+          ? buttonText === "Sign In"
+            ? "Signing In..."
+            : "Signing Up..."
+          : buttonText}
       </Button>
 
       {formType === "SIGN_IN" ? (

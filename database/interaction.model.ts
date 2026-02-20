@@ -1,4 +1,4 @@
-import { Model, Schema, Types, model, models } from "mongoose";
+import { type Model, Schema, type Types, model, models } from "mongoose";
 
 export type InteractionAction =
   | "view"
@@ -28,10 +28,23 @@ const InteractionSchema = new Schema<IInteraction>(
     user: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
     action: {
       type: String,
-      enum: ["view", "ask_question", "answer_question", "upvote", "downvote", "save", "unsave", "search"],
+      enum: [
+        "view",
+        "ask_question",
+        "answer_question",
+        "upvote",
+        "downvote",
+        "save",
+        "unsave",
+        "search",
+      ],
       required: true,
     },
-    targetType: { type: String, enum: ["Question", "Answer", "Tag", "User", "Search"], required: true },
+    targetType: {
+      type: String,
+      enum: ["Question", "Answer", "Tag", "User", "Search"],
+      required: true,
+    },
     targetId: { type: Schema.Types.ObjectId, index: true },
     tags: [{ type: String, trim: true, lowercase: true }],
     searchQuery: { type: String, trim: true },

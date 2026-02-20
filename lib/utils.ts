@@ -1,4 +1,4 @@
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -67,7 +67,13 @@ const TECH_ICON_MAP: Record<string, string> = {
 };
 
 const normalizeTechName = (name: string) =>
-  name.trim().toLowerCase().replace(/\.js/g, "js").replace(/[()]/g, " ").replace(/\s+/g, " ").replace(/\s/g, "-");
+  name
+    .trim()
+    .toLowerCase()
+    .replace(/\.js/g, "js")
+    .replace(/[()]/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/\s/g, "-");
 
 export const getDeviconClass = (name: string) => {
   if (!name?.trim()) return DEVICON_FALLBACK_CLASS;

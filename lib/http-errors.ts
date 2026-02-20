@@ -50,8 +50,11 @@ export class NotFoundError extends HttpError {
   }
 }
 
-export const createHttpError = (status: number, message?: string, options?: HttpErrorOptions): HttpError =>
-  new HttpError(status, message, options);
+export const createHttpError = (
+  status: number,
+  message?: string,
+  options?: HttpErrorOptions
+): HttpError => new HttpError(status, message, options);
 
 export const isHttpError = (error: unknown): error is HttpError =>
   error instanceof HttpError ||
@@ -141,5 +144,8 @@ export const tooManyRequests = (message?: string, options?: HttpErrorOptions): H
 export const internalServerError = (message?: string, options?: HttpErrorOptions): HttpError =>
   createHttpError(500, message, options);
 
-export const validationError = (fieldErrors: FieldErrors, message?: string, options?: HttpErrorOptions): ValidationError =>
-  new ValidationError(fieldErrors, message, options);
+export const validationError = (
+  fieldErrors: FieldErrors,
+  message?: string,
+  options?: HttpErrorOptions
+): ValidationError => new ValidationError(fieldErrors, message, options);

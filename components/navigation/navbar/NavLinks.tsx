@@ -1,12 +1,12 @@
 "use client";
 
+import { SheetClose } from "@/components/ui/sheet";
 import { sidebarLinks } from "@/constants";
 import ROUTES from "@/constants/routes";
-import Link from "next/link";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { SheetClose } from "@/components/ui/sheet";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React from "react";
 
 interface NavLinksProps {
@@ -48,7 +48,14 @@ const NavLinks = ({ isMobileNav = false, userId = "1" }: NavLinksProps) => {
               alt={`${link.name} icon`}
               className={cn({ "invert-colors": !isActive })}
             />
-            <p className={cn(isActive ? "base-bold" : "base-medium", !isMobileNav && "max-lg:hidden")}>{link.name}</p>
+            <p
+              className={cn(
+                isActive ? "base-bold" : "base-medium",
+                !isMobileNav && "max-lg:hidden"
+              )}
+            >
+              {link.name}
+            </p>
           </Link>
         );
 
