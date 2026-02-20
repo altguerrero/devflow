@@ -1,15 +1,15 @@
 "use client";
 
-import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { useState } from "react";
+import { type AskQuestionInput, AskQuestionSchema } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AskQuestionInput, AskQuestionSchema } from "@/lib/validations";
 import dynamic from "next/dynamic";
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "../ui/field";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { useState } from "react";
+import { Controller, type SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import TagCard from "../cards/TagCard";
+import { Button } from "../ui/button";
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "../ui/field";
+import { Input } from "../ui/input";
 
 const MdxEditor = dynamic(() => import("@/components/editor/MdxEditor"), {
   ssr: false,
@@ -62,7 +62,10 @@ const QuestionForm = () => {
     }
 
     form.clearErrors("tags");
-    form.setValue("tags", [...currentTags, normalizedTag], { shouldValidate: true, shouldDirty: true });
+    form.setValue("tags", [...currentTags, normalizedTag], {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
     setTagInput("");
   };
 
@@ -77,7 +80,11 @@ const QuestionForm = () => {
   };
 
   return (
-    <form className="mt-8 space-y-8" id="question-form" onSubmit={form.handleSubmit(handleCreateQuestion)}>
+    <form
+      className="mt-8 space-y-8"
+      id="question-form"
+      onSubmit={form.handleSubmit(handleCreateQuestion)}
+    >
       <FieldGroup>
         <Controller
           name="title"
@@ -134,7 +141,10 @@ const QuestionForm = () => {
           control={form.control}
           render={({ fieldState }) => (
             <Field data-invalid={fieldState.invalid} className="flex w-full flex-col">
-              <FieldLabel className="paragraph-semibold text-dark400_light800" htmlFor="question-tags">
+              <FieldLabel
+                className="paragraph-semibold text-dark400_light800"
+                htmlFor="question-tags"
+              >
                 Tags <span className="text-primary-500">*</span>
               </FieldLabel>
 
@@ -154,7 +164,15 @@ const QuestionForm = () => {
               />
               <div className="flex-start flex flex-wrap gap-2.5">
                 {tags.map((tag) => (
-                  <TagCard key={tag} _id={tag} name={tag} compact remove isButton handleRemove={() => removeTag(tag)} />
+                  <TagCard
+                    key={tag}
+                    _id={tag}
+                    name={tag}
+                    compact
+                    remove
+                    isButton
+                    handleRemove={() => removeTag(tag)}
+                  />
                 ))}
               </div>
               <FieldDescription className="body-regular text-light-500">

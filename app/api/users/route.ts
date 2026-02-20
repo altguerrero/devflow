@@ -1,10 +1,10 @@
+import { hash } from "bcryptjs";
 import { NextResponse } from "next/server";
 import { flattenError } from "zod";
-import { hash } from "bcryptjs";
 
 import User from "@/database/user.model";
 import handleError from "@/lib/handlers/error";
-import { conflict, ValidationError } from "@/lib/http-errors";
+import { ValidationError, conflict } from "@/lib/http-errors";
 import dbConnect from "@/lib/mongoose";
 import { sanitizeUser } from "@/lib/sanitizers/user";
 import { UserSchema } from "@/lib/validations";

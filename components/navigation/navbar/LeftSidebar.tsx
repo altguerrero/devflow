@@ -1,8 +1,8 @@
-import React from "react";
-import ROUTES from "@/constants/routes";
-import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import ROUTES from "@/constants/routes";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
 import NavLinks from "./NavLinks";
 
 const LeftSidebar = () => {
@@ -13,9 +13,18 @@ const LeftSidebar = () => {
       </div>
 
       <div className="flex flex-col gap-3">
-        <Button className="small-medium btn-secondary min-h-10.25 w-full rounded-lg px-4 py-3 shadow-none" asChild>
+        <Button
+          className="small-medium btn-secondary min-h-10.25 w-full rounded-lg px-4 py-3 shadow-none"
+          asChild
+        >
           <Link href={ROUTES.SIGN_IN}>
-            <Image src="/icons/account.svg" alt="Account" width={20} height={20} className="invert-colors lg:hidden" />
+            <Image
+              src="/icons/account.svg"
+              alt="Account"
+              width={20}
+              height={20}
+              className="invert-colors lg:hidden"
+            />
             <span className="primary-text-gradient max-lg:hidden">Log In</span>
           </Link>
         </Button>
@@ -25,7 +34,13 @@ const LeftSidebar = () => {
           asChild
         >
           <Link href={ROUTES.SIGN_UP}>
-            <Image src="/icons/sign-up.svg" alt="Account" width={20} height={20} className="invert-colors lg:hidden" />
+            <Image
+              src="/icons/sign-up.svg"
+              alt="Account"
+              width={20}
+              height={20}
+              className="invert-colors lg:hidden"
+            />
             <span className="max-lg:hidden">Sign Up</span>
           </Link>
         </Button>

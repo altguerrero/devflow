@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
-import { isValidObjectId } from "mongoose";
 import { hash } from "bcryptjs";
+import { isValidObjectId } from "mongoose";
+import { NextResponse } from "next/server";
 import { flattenError } from "zod";
 
 import User from "@/database/user.model";
 import handleError from "@/lib/handlers/error";
-import { badRequest, conflict, notFound, ValidationError } from "@/lib/http-errors";
+import { ValidationError, badRequest, conflict, notFound } from "@/lib/http-errors";
 import dbConnect from "@/lib/mongoose";
 import { sanitizeUser } from "@/lib/sanitizers/user";
 import { UserSchema } from "@/lib/validations";

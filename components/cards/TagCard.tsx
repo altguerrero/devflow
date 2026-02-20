@@ -2,8 +2,8 @@ import Link from "next/link";
 
 import ROUTES from "@/constants/routes";
 import { cn, getDeviconClass } from "@/lib/utils";
-import { Badge } from "../ui/badge";
 import Image from "next/image";
+import { Badge } from "../ui/badge";
 
 interface Props {
   _id: string;
@@ -24,10 +24,15 @@ const TagContent = ({
 }: Pick<Props, "name" | "compact" | "remove"> & { onRemove?: () => void }) => (
   <Badge className="subtle-medium background-light800_dark300 text-light400_light500 rounded-md border-none px-4 py-2 uppercase">
     <div className="flex-center space-x-2">
-      <i className={cn(getDeviconClass(name), compact ? "text-sm" : "text-base")} aria-hidden="true" />
+      <i className={cn(getDeviconClass(name), compact ? "text-sm" : "text-base")} />
       <span>{name}</span>
       {remove && onRemove && (
-        <button type="button" onClick={onRemove} aria-label={`Remove tag ${name}`} className="ml-1 cursor-pointer">
+        <button
+          type="button"
+          onClick={onRemove}
+          aria-label={`Remove tag ${name}`}
+          className="ml-1 cursor-pointer"
+        >
           <Image
             src="/icons/close.svg"
             width={12}

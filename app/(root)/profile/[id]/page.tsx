@@ -20,8 +20,8 @@ const ProfilePage = async ({ params }: ProfilePageProps) => {
         </div>
 
         <p className="paragraph-regular text-dark500_light700 mt-6 max-w-2xl">
-          Frontend engineer focused on React and Next.js. This is a starter profile page you can replace with data
-          from your database.
+          Frontend engineer focused on React and Next.js. This is a starter profile page you can
+          replace with data from your database.
         </p>
 
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">

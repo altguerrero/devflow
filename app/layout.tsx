@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import "@mdxeditor/editor/style.css";
-import { ThemeProvider } from "next-themes";
+import { auth } from "@/auth";
 import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "next-auth/react";
-import { auth } from "@/auth";
+import { ThemeProvider } from "next-themes";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -48,7 +48,12 @@ const RootLayout = async ({
       </head>
       <body className={`${inter.className} ${spaceGrotesk.variable} antialiased`}>
         <SessionProvider session={session}>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
             {children}
           </ThemeProvider>
           <Toaster />

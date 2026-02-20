@@ -1,6 +1,6 @@
-import React from "react";
-import Image from "next/image";
 import SocialAuthForm from "@/components/forms/SocialAuthForm";
+import Image from "next/image";
+import type React from "react";
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -9,9 +9,17 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="flex items-center justify-between gap-2">
           <div className="space-y-2.5">
             <h1 className="h2-bold text-dark100_light900">Join DevFlow</h1>
-            <p className="paragraph-regular text-dark500_light400">To get your questions answered.</p>
+            <p className="paragraph-regular text-dark500_light400">
+              To get your questions answered.
+            </p>
           </div>
-          <Image src="/images/site-logo.svg" alt="DevFlow Logo" width={50} height={50} className="object-contain" />
+          <Image
+            src="/images/site-logo.svg"
+            alt="DevFlow Logo"
+            width={50}
+            height={50}
+            className="object-contain"
+          />
         </div>
 
         {children}

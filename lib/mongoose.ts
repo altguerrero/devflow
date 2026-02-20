@@ -1,6 +1,6 @@
 import "server-only";
-import mongoose, { Mongoose } from "mongoose";
 import logger from "@/lib/logger";
+import mongoose, { type Mongoose } from "mongoose";
 
 const MONGODB_URI = process.env.MONGODB_URI;
 const MONGODB_DB_NAME = process.env.MONGODB_DB_NAME ?? "devflow";
@@ -15,13 +15,13 @@ interface MongooseCache {
 }
 
 declare global {
-  var mongoose: MongooseCache | undefined;
+  var mongooseCache: MongooseCache | undefined;
 }
 
-let cached = global.mongoose;
+let cached = global.mongooseCache;
 
 if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
+  cached = global.mongooseCache = { conn: null, promise: null };
 }
 
 const dbConnect = async (): Promise<Mongoose> => {

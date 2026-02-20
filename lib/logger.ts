@@ -27,6 +27,18 @@ declare global {
   var __logger__: pino.Logger | undefined;
 }
 
-const logger = !isEdge && !isProduction ? (global.__logger__ ??= pino(options)) : pino(options);
+const logger = (() => {
+  if (isEdge || isProduction) {
+    return pino(options);
+  }
+
+  if (global.__logger__) {
+    return global.__logger__;
+  }
+
+  const created = pino(options);
+  global.__logger__ = created;
+  return created;
+})();
 
 export default logger;

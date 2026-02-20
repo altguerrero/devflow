@@ -29,9 +29,9 @@ import {
 } from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
 import "./dark-editor.css";
+import { cn } from "@/lib/utils";
 import { basicDark } from "cm6-theme-basic-dark";
 import { useTheme } from "next-themes";
-import { cn } from "@/lib/utils";
 
 interface MdxEditorProps {
   value: string;

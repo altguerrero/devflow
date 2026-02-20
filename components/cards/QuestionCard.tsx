@@ -3,15 +3,17 @@ import Link from "next/link";
 import ROUTES from "@/constants/routes";
 import { getTimeStamp } from "@/lib/utils";
 
-import TagCard from "./TagCard";
+import type { Question, Tag } from "@/types/global";
 import Metric from "../Metric";
-import { Question, Tag } from "@/types/global";
+import TagCard from "./TagCard";
 
 interface Props {
   question: Question;
 }
 
-const QuestionCard = ({ question: { _id, title, tags, createdAt, upvotes, answers, views } }: Props) => {
+const QuestionCard = ({
+  question: { _id, title, tags, createdAt, upvotes, answers, views },
+}: Props) => {
   return (
     <div className="card-wrapper rounded-[10px] p-9 sm:px-11">
       <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
@@ -21,7 +23,9 @@ const QuestionCard = ({ question: { _id, title, tags, createdAt, upvotes, answer
           </span>
 
           <Link href={ROUTES.QUESTIONS(_id)}>
-            <h3 className="sm:h3-semibold base-semibold text-dark200_light900 line-clamp-1 flex-1">{title}</h3>
+            <h3 className="sm:h3-semibold base-semibold text-dark200_light900 line-clamp-1 flex-1">
+              {title}
+            </h3>
           </Link>
         </div>
       </div>
