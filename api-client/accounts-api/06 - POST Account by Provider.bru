@@ -1,0 +1,18 @@
+meta {
+  name: POST Account by Provider
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/accounts/provider
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "provider": "{{provider}}",
+    "providerAccountId": "{{providerAccountId}}"
+  }
+}
