@@ -1,0 +1,25 @@
+meta {
+  name: POST Account
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/accounts
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "userId": "{{userId}}",
+    "provider": "github",
+    "providerAccountId": "github-user-123",
+    "type": "oauth",
+    "accessToken": "example-access-token",
+    "refreshToken": "example-refresh-token",
+    "expiresAt": 1893456000,
+    "tokenType": "bearer",
+    "scope": "read:user user:email"
+  }
+}

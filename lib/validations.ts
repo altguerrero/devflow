@@ -14,7 +14,6 @@ const QUESTION_TAG_MIN_LENGTH = 1;
 const QUESTION_TAG_MAX_LENGTH = 20;
 const QUESTION_TAG_MIN_COUNT = 1;
 const QUESTION_TAG_MAX_COUNT = 5;
-
 const emailField = z
   .string()
   .trim()
@@ -64,6 +63,22 @@ export const SignUpSchema = UserSchema.extend({
 export type SignInInput = z.infer<typeof SignInSchema>;
 export type SignUpInput = z.infer<typeof SignUpSchema>;
 export type UserInput = z.infer<typeof UserSchema>;
+
+export const AccountSchema = z.object({
+  userId: z.string().trim().min(1, "User id is required"),
+  provider: z.string().trim().toLowerCase().min(1, "Provider is required"),
+  providerAccountId: z.string().trim().min(1, "Provider account id is required"),
+  type: z.string().trim().toLowerCase().min(1, "Type is required"),
+  accessToken: z.string().trim().optional(),
+  refreshToken: z.string().trim().optional(),
+  expiresAt: z.number().int().nonnegative().optional(),
+  tokenType: z.string().trim().optional(),
+  scope: z.string().trim().optional(),
+  idToken: z.string().trim().optional(),
+  sessionState: z.string().trim().optional(),
+});
+
+export type AccountInput = z.infer<typeof AccountSchema>;
 
 export const AskQuestionSchema = z.object({
   title: z

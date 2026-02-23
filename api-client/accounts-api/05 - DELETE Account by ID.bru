@@ -1,0 +1,11 @@
+meta {
+  name: DELETE Account by ID
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/api/accounts/{{accountId}}
+  body: none
+  auth: none
+}

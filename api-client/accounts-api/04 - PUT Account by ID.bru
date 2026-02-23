@@ -1,0 +1,19 @@
+meta {
+  name: PUT Account by ID
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/accounts/{{accountId}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "scope": "read:user user:email repo",
+    "tokenType": "Bearer",
+    "sessionState": "updated-session-state"
+  }
+}
