@@ -79,6 +79,11 @@ export const AccountSchema = z.object({
 });
 
 export type AccountInput = z.infer<typeof AccountSchema>;
+export const AccountProviderLookupSchema = AccountSchema.pick({
+  provider: true,
+  providerAccountId: true,
+});
+export type AccountProviderLookupInput = z.infer<typeof AccountProviderLookupSchema>;
 
 export const AskQuestionSchema = z.object({
   title: z
