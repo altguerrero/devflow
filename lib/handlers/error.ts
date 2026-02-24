@@ -1,41 +1,42 @@
-import { NextResponse } from "next/server";
-import { ZodError, flattenError } from "zod";
-
-import { toErrorResponse, validationError } from "@/lib/http-errors";
+import { type ErrorResponseBody, normalizeError } from "@/lib/handlers/error-core";
 import logger from "@/lib/logger";
-
-export type ErrorResponseBody = {
-  success: false;
-  error: {
-    message: string;
-    details?: Record<string, string[]>;
-  };
-};
+import * as Sentry from "@sentry/nextjs";
+import { NextResponse } from "next/server";
 
 export type ResponseType = "api" | "server";
+export type { ErrorResponseBody } from "@/lib/handlers/error-core";
+export { normalizeError } from "@/lib/handlers/error-core";
 
-export const normalizeError = (
+const shouldReportToSentry = (status: number) => status >= 500;
+
+const reportErrorToSentry = (
   error: unknown,
-  fallbackMessage = "Internal Server Error"
-): { status: number; body: ErrorResponseBody } => {
-  if (error instanceof ZodError) {
-    const fieldErrors = flattenError(error).fieldErrors as Record<string, string[]>;
-    const zodAsValidationError = validationError(fieldErrors);
-    return normalizeError(zodAsValidationError, fallbackMessage);
+  context: {
+    status: number;
+    responseType: ResponseType;
+    message: string;
+    details?: Record<string, string[]>;
   }
+) => {
+  if (!shouldReportToSentry(context.status)) return;
 
-  const { status, message, errors } = toErrorResponse(error, fallbackMessage);
+  Sentry.withScope((scope) => {
+    scope.setTag("error_handler", "handleError");
+    scope.setTag("response_type", context.responseType);
+    scope.setTag("http_status", String(context.status));
+    scope.setLevel("error");
 
-  return {
-    status,
-    body: {
-      success: false,
-      error: {
-        message,
-        ...(errors ? { details: errors } : {}),
-      },
-    },
-  };
+    if (context.details) {
+      scope.setContext("error_details", context.details);
+    }
+
+    if (error instanceof Error) {
+      Sentry.captureException(error);
+      return;
+    }
+
+    Sentry.captureMessage(context.message);
+  });
 };
 
 export const handleError = (
@@ -57,6 +58,13 @@ export const handleError = (
   } else {
     logger.warn(logContext, "Handled request error");
   }
+
+  reportErrorToSentry(error, {
+    status,
+    responseType,
+    message: body.error.message,
+    details: body.error.details,
+  });
 
   if (responseType === "api") {
     return NextResponse.json(body, { status });
