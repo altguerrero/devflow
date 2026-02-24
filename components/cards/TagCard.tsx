@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import ROUTES from "@/constants/routes";
+import ROUTES from "@/constants/app-routes";
 import { cn, getDeviconClass } from "@/lib/utils";
 import Image from "next/image";
 import { Badge } from "../ui/badge";

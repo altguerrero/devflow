@@ -1,5 +1,5 @@
 import TagCard from "@/components/cards/TagCard";
-import ROUTES from "@/constants/routes";
+import ROUTES from "@/constants/app-routes";
 import Image from "next/image";
 import Link from "next/link";
 

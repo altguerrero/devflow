@@ -1,6 +1,6 @@
 "use client";
 
-import ROUTES from "@/constants/routes";
+import ROUTES from "@/constants/app-routes";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import { toast } from "sonner";
