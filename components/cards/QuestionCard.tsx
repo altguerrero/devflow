@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import ROUTES from "@/constants/routes";
+import ROUTES from "@/constants/app-routes";
 import { getTimeStamp } from "@/lib/utils";
 
 import type { Question, Tag } from "@/types/global";

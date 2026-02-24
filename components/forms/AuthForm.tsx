@@ -1,6 +1,6 @@
 "use client";
 
-import ROUTES from "@/constants/routes";
+import ROUTES from "@/constants/app-routes";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import Link from "next/link";
 import {

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import ROUTES from "@/constants/routes";
+import ROUTES from "@/constants/app-routes";
 import Image from "next/image";
 import Link from "next/link";
 import NavLinks from "./NavLinks";
