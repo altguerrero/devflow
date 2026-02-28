@@ -52,7 +52,23 @@ const InteractionSchema = new Schema<IInteraction>(
   { timestamps: true }
 );
 
+InteractionSchema.pre("validate", function () {
+  const isSearch = this.targetType === "Search" || this.action === "search";
+
+  if (isSearch) {
+    if (!this.searchQuery?.trim()) {
+      this.invalidate("searchQuery", "searchQuery is required for search interactions");
+    }
+    return;
+  }
+
+  if (!this.targetId) {
+    this.invalidate("targetId", "targetId is required for non-search interactions");
+  }
+});
+
 InteractionSchema.index({ user: 1, createdAt: -1 });
+InteractionSchema.index({ user: 1, action: 1, createdAt: -1 });
 InteractionSchema.index({ action: 1, targetType: 1, targetId: 1 });
 
 const Interaction: Model<IInteraction> =
