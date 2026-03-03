@@ -1,10 +1,11 @@
 import Account, { type IAccount } from "@/database/account.model";
 import User, { type IUser } from "@/database/user.model";
 import { notFound } from "@/lib/http-errors";
+import withMongoTransaction from "@/lib/mongoose-transaction";
 import { sanitizeAccount } from "@/lib/sanitizers/account";
 import { sanitizeUser } from "@/lib/sanitizers/user";
 import { OAUTH_PROVIDERS, type OAuthProvider } from "@/types/auth";
-import mongoose, { type Types } from "mongoose";
+import type { ClientSession, Types } from "mongoose";
 import slugify from "slugify";
 import { z } from "zod";
 
@@ -78,10 +79,7 @@ const buildUsernameCandidate = (base: string, attempt: number) => {
   return `${base.slice(0, Math.max(maxBaseLength, 1))}${suffix}`;
 };
 
-const findAvailableUsername = async (
-  base: string,
-  session: mongoose.ClientSession
-): Promise<string> => {
+const findAvailableUsername = async (base: string, session: ClientSession): Promise<string> => {
   for (let attempt = 0; attempt < MAX_USERNAME_ATTEMPTS; attempt += 1) {
     const username = buildUsernameCandidate(base, attempt);
     const exists = await User.exists({ username }).session(session);
@@ -97,117 +95,109 @@ export const signInWithOAuth = async (input: OAuthSignInInput): Promise<OAuthSig
   const incomingName = normalizeOptionalString(user.name) ?? user.email.split("@")[0];
   const incomingImage = normalizeOptionalString(user.image);
 
-  const session = await mongoose.startSession();
+  const transactionResult = await withMongoTransaction(async (session) => {
+    const existingAccount = await Account.findOne({ provider, providerAccountId }).session(session);
 
-  try {
-    const transactionResult = await session.withTransaction(async () => {
-      const existingAccount = await Account.findOne({ provider, providerAccountId }).session(
-        session
-      );
+    if (existingAccount) {
+      const existingUser = await User.findById(existingAccount.userId).session(session);
 
-      if (existingAccount) {
-        const existingUser = await User.findById(existingAccount.userId).session(session);
-
-        if (!existingUser) {
-          throw notFound("User linked to OAuth account not found");
-        }
-
-        let shouldSaveUser = false;
-
-        if (!existingUser.name && incomingName) {
-          existingUser.name = incomingName;
-          shouldSaveUser = true;
-        }
-
-        if (!existingUser.image && incomingImage) {
-          existingUser.image = incomingImage;
-          shouldSaveUser = true;
-        }
-
-        if (shouldSaveUser) {
-          await existingUser.save({ session });
-        }
-
-        const safeAccount = sanitizeAccount(existingAccount.toObject());
-
-        return {
-          user: sanitizeUser(existingUser.toObject()),
-          account: { ...safeAccount, provider },
-          isNewUser: false,
-          isNewAccount: false,
-        };
+      if (!existingUser) {
+        throw notFound("User linked to OAuth account not found");
       }
 
-      let dbUser = await User.findOne({ email: user.email }).session(session);
-      let isNewUser = false;
+      let shouldSaveUser = false;
 
-      if (!dbUser) {
-        const usernameBase = buildUsernameBase(incomingName, user.email);
-        const username = await findAvailableUsername(usernameBase, session);
-
-        dbUser = await User.create(
-          [
-            {
-              name: incomingName,
-              email: user.email,
-              username,
-              image: incomingImage,
-            } satisfies Partial<IUser>,
-          ],
-          { session }
-        ).then(([createdUser]) => createdUser);
-
-        isNewUser = true;
-      } else {
-        let shouldSaveUser = false;
-
-        if (!dbUser.name && incomingName) {
-          dbUser.name = incomingName;
-          shouldSaveUser = true;
-        }
-
-        if (!dbUser.image && incomingImage) {
-          dbUser.image = incomingImage;
-          shouldSaveUser = true;
-        }
-
-        if (shouldSaveUser) {
-          await dbUser.save({ session });
-        }
+      if (!existingUser.name && incomingName) {
+        existingUser.name = incomingName;
+        shouldSaveUser = true;
       }
 
-      if (!dbUser) {
-        throw new Error("OAuth sign-in failed to resolve user record");
+      if (!existingUser.image && incomingImage) {
+        existingUser.image = incomingImage;
+        shouldSaveUser = true;
       }
 
-      const newAccount = await Account.create(
-        [
-          {
-            userId: dbUser._id,
-            provider,
-            providerAccountId,
-            type: "oauth",
-          },
-        ],
-        { session }
-      ).then(([createdAccount]) => createdAccount);
+      if (shouldSaveUser) {
+        await existingUser.save({ session });
+      }
 
-      const safeAccount = sanitizeAccount(newAccount.toObject());
+      const safeAccount = sanitizeAccount(existingAccount.toObject());
 
       return {
-        user: sanitizeUser(dbUser.toObject()),
+        user: sanitizeUser(existingUser.toObject()),
         account: { ...safeAccount, provider },
-        isNewUser,
-        isNewAccount: true,
+        isNewUser: false,
+        isNewAccount: false,
       };
-    });
-
-    if (!transactionResult) {
-      throw new Error("OAuth sign-in transaction completed without a response payload");
     }
 
-    return transactionResult;
-  } finally {
-    await session.endSession();
+    let dbUser = await User.findOne({ email: user.email }).session(session);
+    let isNewUser = false;
+
+    if (!dbUser) {
+      const usernameBase = buildUsernameBase(incomingName, user.email);
+      const username = await findAvailableUsername(usernameBase, session);
+
+      dbUser = await User.create(
+        [
+          {
+            name: incomingName,
+            email: user.email,
+            username,
+            image: incomingImage,
+          } satisfies Partial<IUser>,
+        ],
+        { session }
+      ).then(([createdUser]) => createdUser);
+
+      isNewUser = true;
+    } else {
+      let shouldSaveUser = false;
+
+      if (!dbUser.name && incomingName) {
+        dbUser.name = incomingName;
+        shouldSaveUser = true;
+      }
+
+      if (!dbUser.image && incomingImage) {
+        dbUser.image = incomingImage;
+        shouldSaveUser = true;
+      }
+
+      if (shouldSaveUser) {
+        await dbUser.save({ session });
+      }
+    }
+
+    if (!dbUser) {
+      throw new Error("OAuth sign-in failed to resolve user record");
+    }
+
+    const newAccount = await Account.create(
+      [
+        {
+          userId: dbUser._id,
+          provider,
+          providerAccountId,
+          type: "oauth",
+        },
+      ],
+      { session }
+    ).then(([createdAccount]) => createdAccount);
+
+    const safeAccount = sanitizeAccount(newAccount.toObject());
+
+    return {
+      user: sanitizeUser(dbUser.toObject()),
+      account: { ...safeAccount, provider },
+      isNewUser,
+      isNewAccount: true,
+    };
+  });
+
+  if (!transactionResult) {
+    throw new Error("OAuth sign-in transaction completed without a response payload");
   }
+
+  return transactionResult;
 };

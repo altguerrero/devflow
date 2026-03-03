@@ -1,3 +1,5 @@
+import HTTP_STATUS from "@/constants/http-status";
+
 export type HttpErrorOptions = {
   cause?: unknown;
   details?: unknown;
@@ -23,7 +25,10 @@ export class ValidationError extends HttpError {
   public readonly fieldErrors: FieldErrors;
 
   constructor(fieldErrors: FieldErrors, message?: string, options: HttpErrorOptions = {}) {
-    super(400, message ?? formatFieldErrors(fieldErrors), { ...options, details: fieldErrors });
+    super(HTTP_STATUS.BAD_REQUEST, message ?? formatFieldErrors(fieldErrors), {
+      ...options,
+      details: fieldErrors,
+    });
     this.name = "ValidationError";
     this.fieldErrors = fieldErrors;
   }
@@ -31,21 +36,21 @@ export class ValidationError extends HttpError {
 
 export class UnauthorizedError extends HttpError {
   constructor(message = "Unauthorized", options: HttpErrorOptions = {}) {
-    super(401, message, options);
+    super(HTTP_STATUS.UNAUTHORIZED, message, options);
     this.name = "UnauthorizedError";
   }
 }
 
 export class ForbiddenError extends HttpError {
   constructor(message = "Forbidden", options: HttpErrorOptions = {}) {
-    super(403, message, options);
+    super(HTTP_STATUS.FORBIDDEN, message, options);
     this.name = "ForbiddenError";
   }
 }
 
 export class NotFoundError extends HttpError {
   constructor(resource = "Resource", options: HttpErrorOptions = {}) {
-    super(404, `${resource} not found`, options);
+    super(HTTP_STATUS.NOT_FOUND, `${resource} not found`, options);
     this.name = "NotFoundError";
   }
 }
@@ -63,7 +68,10 @@ export const isHttpError = (error: unknown): error is HttpError =>
     "status" in error &&
     typeof (error as { status?: unknown }).status === "number");
 
-export const getHttpStatusCode = (error: unknown, fallback = 500): number => {
+export const getHttpStatusCode = (
+  error: unknown,
+  fallback = HTTP_STATUS.INTERNAL_SERVER_ERROR
+): number => {
   if (isHttpError(error)) {
     return error.status;
   }
@@ -81,22 +89,24 @@ export const getHttpErrorMessage = (error: unknown, fallback = "Internal Server 
 
 export const getDefaultHttpErrorMessage = (status: number): string => {
   switch (status) {
-    case 400:
+    case HTTP_STATUS.BAD_REQUEST:
       return "Bad Request";
-    case 401:
+    case HTTP_STATUS.UNAUTHORIZED:
       return "Unauthorized";
-    case 403:
+    case HTTP_STATUS.FORBIDDEN:
       return "Forbidden";
-    case 404:
+    case HTTP_STATUS.NOT_FOUND:
       return "Not Found";
-    case 409:
+    case HTTP_STATUS.CONFLICT:
       return "Conflict";
-    case 422:
+    case HTTP_STATUS.UNPROCESSABLE_ENTITY:
       return "Unprocessable Entity";
-    case 429:
+    case HTTP_STATUS.TOO_MANY_REQUESTS:
       return "Too Many Requests";
     default:
-      return status >= 500 ? "Internal Server Error" : "Request Error";
+      return status >= HTTP_STATUS.INTERNAL_SERVER_ERROR
+        ? "Internal Server Error"
+        : "Request Error";
   }
 };
 
@@ -128,21 +138,21 @@ export const toErrorResponse = (
 };
 
 export const badRequest = (message?: string, options?: HttpErrorOptions): HttpError =>
-  createHttpError(400, message, options);
+  createHttpError(HTTP_STATUS.BAD_REQUEST, message, options);
 export const unauthorized = (message?: string, options?: HttpErrorOptions): HttpError =>
-  createHttpError(401, message, options);
+  createHttpError(HTTP_STATUS.UNAUTHORIZED, message, options);
 export const forbidden = (message?: string, options?: HttpErrorOptions): HttpError =>
-  createHttpError(403, message, options);
+  createHttpError(HTTP_STATUS.FORBIDDEN, message, options);
 export const notFound = (message?: string, options?: HttpErrorOptions): HttpError =>
-  createHttpError(404, message, options);
+  createHttpError(HTTP_STATUS.NOT_FOUND, message, options);
 export const conflict = (message?: string, options?: HttpErrorOptions): HttpError =>
-  createHttpError(409, message, options);
+  createHttpError(HTTP_STATUS.CONFLICT, message, options);
 export const unprocessableEntity = (message?: string, options?: HttpErrorOptions): HttpError =>
-  createHttpError(422, message, options);
+  createHttpError(HTTP_STATUS.UNPROCESSABLE_ENTITY, message, options);
 export const tooManyRequests = (message?: string, options?: HttpErrorOptions): HttpError =>
-  createHttpError(429, message, options);
+  createHttpError(HTTP_STATUS.TOO_MANY_REQUESTS, message, options);
 export const internalServerError = (message?: string, options?: HttpErrorOptions): HttpError =>
-  createHttpError(500, message, options);
+  createHttpError(HTTP_STATUS.INTERNAL_SERVER_ERROR, message, options);
 
 export const validationError = (
   fieldErrors: FieldErrors,

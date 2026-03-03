@@ -2,6 +2,7 @@ import { isValidObjectId } from "mongoose";
 import { NextResponse } from "next/server";
 import { flattenError } from "zod";
 
+import HTTP_STATUS from "@/constants/http-status";
 import Account from "@/database/account.model";
 import User from "@/database/user.model";
 import handleError from "@/lib/handlers/error";
@@ -19,7 +20,7 @@ export async function GET() {
 
     return NextResponse.json(
       { success: true, data: accounts.map((account) => sanitizeAccount(account)) },
-      { status: 200 }
+      { status: HTTP_STATUS.OK }
     );
   } catch (error) {
     return handleError(error, "api") as APIErrorResponse;
@@ -57,7 +58,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { success: true, data: sanitizeAccount(newAccount.toObject()) },
-      { status: 201 }
+      { status: HTTP_STATUS.CREATED }
     );
   } catch (error) {
     return handleError(error, "api") as APIErrorResponse;
