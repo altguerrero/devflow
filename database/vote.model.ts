@@ -24,6 +24,7 @@ const VoteSchema = new Schema<IVote>(
 
 VoteSchema.index({ voter: 1, targetType: 1, targetId: 1 }, { unique: true });
 VoteSchema.index({ targetType: 1, targetId: 1, value: 1 });
+VoteSchema.index({ voter: 1, createdAt: -1 });
 
 const Vote: Model<IVote> = models.Vote || model<IVote>("Vote", VoteSchema);
 

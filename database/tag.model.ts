@@ -3,7 +3,7 @@ import { type Model, Schema, type Types, model, models } from "mongoose";
 export interface ITag {
   name: string;
   description?: string;
-  questions: Types.ObjectId[];
+  questionsCount: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -21,13 +21,14 @@ const TagSchema = new Schema<ITag>(
       match: /^[a-z0-9-]+$/,
     },
     description: { type: String, maxlength: 300 },
-    questions: [{ type: Schema.Types.ObjectId, ref: "Question" }],
+    questionsCount: { type: Number, default: 0, min: 0 },
   },
   { timestamps: true }
 );
 
 TagSchema.index({ name: 1 });
 TagSchema.index({ name: "text", description: "text" });
+TagSchema.index({ questionsCount: -1, name: 1 });
 
 const Tag: Model<ITag> = models.Tag || model<ITag>("Tag", TagSchema);
 
