@@ -1,3 +1,4 @@
+import HTTP_STATUS from "@/constants/http-status";
 import { OAuthSignInSchema, signInWithOAuth } from "@/lib/auth/oauth-signin";
 import handleError from "@/lib/handlers/error";
 import { ValidationError } from "@/lib/http-errors";
@@ -21,7 +22,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { success: true, data: transactionResult },
-      { status: transactionResult.isNewAccount ? 201 : 200 }
+      { status: transactionResult.isNewAccount ? HTTP_STATUS.CREATED : HTTP_STATUS.OK }
     );
   } catch (error) {
     return handleError(error, "api") as APIErrorResponse;

@@ -1,8 +1,10 @@
+import { PASSWORD_SALT_ROUNDS } from "@/constants/security";
 import { hash } from "bcryptjs";
 import { isValidObjectId } from "mongoose";
 import { NextResponse } from "next/server";
 import { flattenError } from "zod";
 
+import HTTP_STATUS from "@/constants/http-status";
 import User from "@/database/user.model";
 import handleError from "@/lib/handlers/error";
 import { ValidationError, badRequest, conflict, notFound } from "@/lib/http-errors";
@@ -15,7 +17,6 @@ interface RouteContext {
   params: Promise<{ id: string }>;
 }
 
-const PASSWORD_SALT_ROUNDS = 12;
 const UpdateUserSchema = UserSchema.partial();
 
 export async function GET(_request: Request, { params }: RouteContext) {
@@ -34,7 +35,10 @@ export async function GET(_request: Request, { params }: RouteContext) {
       throw notFound("User not found");
     }
 
-    return NextResponse.json({ success: true, data: sanitizeUser(user) }, { status: 200 });
+    return NextResponse.json(
+      { success: true, data: sanitizeUser(user) },
+      { status: HTTP_STATUS.OK }
+    );
   } catch (error) {
     return handleError(error, "api") as APIErrorResponse;
   }
@@ -89,7 +93,10 @@ export async function PUT(request: Request, { params }: RouteContext) {
       throw notFound("User not found");
     }
 
-    return NextResponse.json({ success: true, data: sanitizeUser(updatedUser) }, { status: 200 });
+    return NextResponse.json(
+      { success: true, data: sanitizeUser(updatedUser) },
+      { status: HTTP_STATUS.OK }
+    );
   } catch (error) {
     return handleError(error, "api") as APIErrorResponse;
   }
@@ -111,7 +118,10 @@ export async function DELETE(_request: Request, { params }: RouteContext) {
       throw notFound("User not found");
     }
 
-    return NextResponse.json({ success: true, data: sanitizeUser(deletedUser) }, { status: 200 });
+    return NextResponse.json(
+      { success: true, data: sanitizeUser(deletedUser) },
+      { status: HTTP_STATUS.OK }
+    );
   } catch (error) {
     return handleError(error, "api") as APIErrorResponse;
   }

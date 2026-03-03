@@ -1,3 +1,4 @@
+import HTTP_STATUS from "@/constants/http-status";
 import { type ErrorResponseBody, normalizeError } from "@/lib/handlers/error-core";
 import logger from "@/lib/logger";
 import * as Sentry from "@sentry/nextjs";
@@ -7,7 +8,7 @@ export type ResponseType = "api" | "server";
 export type { ErrorResponseBody } from "@/lib/handlers/error-core";
 export { normalizeError } from "@/lib/handlers/error-core";
 
-const shouldReportToSentry = (status: number) => status >= 500;
+const shouldReportToSentry = (status: number) => status >= HTTP_STATUS.INTERNAL_SERVER_ERROR;
 
 const reportErrorToSentry = (
   error: unknown,
@@ -53,7 +54,7 @@ export const handleError = (
     err: error instanceof Error ? error : undefined,
   };
 
-  if (status >= 500) {
+  if (status >= HTTP_STATUS.INTERNAL_SERVER_ERROR) {
     logger.error(logContext, "Unhandled server error");
   } else {
     logger.warn(logContext, "Handled request error");

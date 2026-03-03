@@ -1,11 +1,12 @@
 "use client";
 
 import AuthForm from "@/components/forms/AuthForm";
-import { SignUpSchema } from "@/lib/validations";
+import { signUpWithCredentials } from "@/lib/actions/auth.action";
+import { type SignUpInput, SignUpSchema } from "@/lib/validations";
 
 const SignUp = () => {
   return (
-    <AuthForm
+    <AuthForm<SignUpInput>
       schema={SignUpSchema}
       defaultValues={{
         name: "",
@@ -14,10 +15,7 @@ const SignUp = () => {
         password: "",
         confirmPassword: "",
       }}
-      onSubmit={async (data) => {
-        void data;
-        return { success: false, error: { message: "Authentication failed" } };
-      }}
+      onSubmit={signUpWithCredentials}
       formType={"SIGN_UP"}
     />
   );

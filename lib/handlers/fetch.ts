@@ -1,3 +1,4 @@
+import HTTP_STATUS from "@/constants/http-status";
 import { normalizeError } from "@/lib/handlers/error-core";
 import type { ActionResponse } from "@/types/global";
 
@@ -51,7 +52,7 @@ const isJsonBody = (body: FetchHandlerOptions["body"]) => {
 };
 
 const parseResponseBody = async (response: Response): Promise<unknown> => {
-  if (response.status === 204) return null;
+  if (response.status === HTTP_STATUS.NO_CONTENT) return null;
 
   const contentType = response.headers.get("content-type") ?? "";
 

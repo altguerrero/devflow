@@ -3,6 +3,7 @@
 import ROUTES from "@/constants/app-routes";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Controller,
   type DefaultValues,
@@ -32,6 +33,7 @@ const AuthForm = <T extends FieldValues>({
   onSubmit,
   formType,
 }: AuthFormProps<T>) => {
+  const router = useRouter();
   const form = useForm<T>({
     resolver: standardSchemaResolver(schema),
     defaultValues: defaultValues as DefaultValues<T>,
@@ -41,6 +43,18 @@ const AuthForm = <T extends FieldValues>({
     const result = await onSubmit(data);
 
     if (!result.success) {
+      if (result.error.details) {
+        for (const [field, messages] of Object.entries(result.error.details)) {
+          const message = messages?.[0];
+          if (!message) continue;
+
+          form.setError(field as Path<T>, {
+            type: "server",
+            message,
+          });
+        }
+      }
+
       toast.error("Authentication failed", {
         description: result.error.message,
       });
@@ -50,6 +64,8 @@ const AuthForm = <T extends FieldValues>({
     toast.success(
       formType === "SIGN_IN" ? "Signed in successfully" : "Account created successfully"
     );
+    router.push(ROUTES.HOME);
+    router.refresh();
   };
 
   const buttonText = formType === "SIGN_IN" ? "Sign In" : "Sign Up";

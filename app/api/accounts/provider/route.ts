@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { flattenError } from "zod";
 
+import HTTP_STATUS from "@/constants/http-status";
 import Account from "@/database/account.model";
 import handleError from "@/lib/handlers/error";
 import { ValidationError, notFound } from "@/lib/http-errors";
@@ -26,7 +27,10 @@ export async function POST(request: Request) {
       throw notFound("Account not found");
     }
 
-    return NextResponse.json({ success: true, data: sanitizeAccount(account) }, { status: 200 });
+    return NextResponse.json(
+      { success: true, data: sanitizeAccount(account) },
+      { status: HTTP_STATUS.OK }
+    );
   } catch (error) {
     return handleError(error, "api") as APIErrorResponse;
   }

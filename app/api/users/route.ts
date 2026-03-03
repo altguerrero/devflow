@@ -1,7 +1,9 @@
+import { PASSWORD_SALT_ROUNDS } from "@/constants/security";
 import { hash } from "bcryptjs";
 import { NextResponse } from "next/server";
 import { flattenError } from "zod";
 
+import HTTP_STATUS from "@/constants/http-status";
 import User from "@/database/user.model";
 import handleError from "@/lib/handlers/error";
 import { ValidationError, conflict } from "@/lib/http-errors";
@@ -10,15 +12,16 @@ import { sanitizeUser } from "@/lib/sanitizers/user";
 import { UserSchema } from "@/lib/validations";
 import type { APIErrorResponse } from "@/types/global";
 
-const PASSWORD_SALT_ROUNDS = 12;
-
 export async function GET() {
   try {
     await dbConnect();
 
     const users = await User.find().lean();
 
-    return NextResponse.json({ success: true, data: users.map(sanitizeUser) }, { status: 200 });
+    return NextResponse.json(
+      { success: true, data: users.map(sanitizeUser) },
+      { status: HTTP_STATUS.OK }
+    );
   } catch (error) {
     return handleError(error, "api") as APIErrorResponse;
   }
@@ -47,7 +50,7 @@ export async function POST(request: Request) {
     const newUser = await User.create({ ...validatedData.data, password: hashedPassword });
     const safeUser = sanitizeUser(newUser.toObject());
 
-    return NextResponse.json({ success: true, data: safeUser }, { status: 201 });
+    return NextResponse.json({ success: true, data: safeUser }, { status: HTTP_STATUS.CREATED });
   } catch (error) {
     return handleError(error, "api") as APIErrorResponse;
   }

@@ -2,6 +2,7 @@
 
 import * as Sentry from "@sentry/nextjs";
 
+import HTTP_STATUS from "@/constants/http-status";
 import type { FetchLoggerLike } from "@/lib/handlers/fetch";
 
 const toRecord = (value: unknown): Record<string, unknown> => {
@@ -16,7 +17,7 @@ const shouldReport = (context: Record<string, unknown>, message?: string) => {
   const status = typeof context.status === "number" ? context.status : null;
 
   if (status !== null) {
-    return status >= 500;
+    return status >= HTTP_STATUS.INTERNAL_SERVER_ERROR;
   }
 
   if (message === "HTTP request aborted") {

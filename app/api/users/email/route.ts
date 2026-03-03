@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import HTTP_STATUS from "@/constants/http-status";
 import User from "@/database/user.model";
 import handleError from "@/lib/handlers/error";
 import { badRequest, notFound } from "@/lib/http-errors";
@@ -31,7 +32,10 @@ export async function POST(request: Request) {
       throw notFound("User not found");
     }
 
-    return NextResponse.json({ success: true, data: sanitizeUser(user) }, { status: 200 });
+    return NextResponse.json(
+      { success: true, data: sanitizeUser(user) },
+      { status: HTTP_STATUS.OK }
+    );
   } catch (error) {
     return handleError(error, "api") as APIErrorResponse;
   }

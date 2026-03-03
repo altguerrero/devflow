@@ -1,7 +1,11 @@
 import api from "@/lib/api/server";
+import { verifyCredentials } from "@/lib/auth/credentials";
 import logger from "@/lib/logger";
+import dbConnect from "@/lib/mongoose";
+import { SignInSchema } from "@/lib/validations";
 import type { OAuthProvider } from "@/types/auth";
 import NextAuth from "next-auth";
+import Credentials from "next-auth/providers/credentials";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 
@@ -9,7 +13,27 @@ const isSupportedOAuthProvider = (provider?: string): provider is OAuthProvider 
   provider === "google" || provider === "github";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [GitHub, Google],
+  providers: [
+    Credentials({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const parsedCredentials = SignInSchema.safeParse(credentials);
+
+        if (!parsedCredentials.success) return null;
+
+        const { email, password } = parsedCredentials.data;
+
+        await dbConnect();
+        return verifyCredentials(email, password);
+      },
+    }),
+    GitHub,
+    Google,
+  ],
   callbacks: {
     async signIn({ user, account }) {
       if (!account || account.type !== "oauth") return true;
